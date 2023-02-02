@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+      integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <title>{% block title%} {%endblock%}</title>
+    {% block headscript %} {% endblock headscript %} {%block style%}{%endblock style%}
+
+    <style>
+      .user-name {
+        color: white;
+        border-radius: 5px;
+        text-transform: capitalize;
+        position: relative;
+        padding: 8px 18px;
+      }
+
+      .user-name::after {
+        content: "";
+        display: block;
+        clear: both;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        background-color: rgba(77, 86, 86, 0.5);
+      }
+
+      .signio,
+      .signup {
+        width: 110px;
+      }
+
+    </style>
+
+
+
+
+
+  </head>
+
+  <body>
+    {% csrf_token %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="/">MySite</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item {%block homeactive%}{%endblock homeactive%}">
+            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item {%block aboutactive%}{%endblock aboutactive%}">
+            <a class="nav-link" href="/about">About <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item {%block contactactive%}{%endblock contactactive%}">
+            <a class="nav-link" href="/contact">Contact</a>
+          </li>
+
+          <li class="nav-item {%block blogactive%}{%endblock blogactive%}">
+            <a class="nav-link" href="/blog/">Blog</a>
+          </li>
+
+          <!-- <li class="nav-item {%block blogpostactive%}{%endblock blogpostactive%}">
+                    <a class="nav-link" href="/blog/blogs">BlogPost</a>
+                </li> -->
+
+
+        </ul>
+
+
+        <!-- Button to trigger signup and signin modal -->
+
+        {% if user.is_authenticated %}
+        <p class="user-name my-2 mx-5 my-sm-0">Hello {{user.first_name}}</p>
+
+        <!-- <p class="user-name my-2 mx-5 my-sm-0">Hello {{request.user}}</p> -->
+
+        {%endif%}
+
+
+        <form method="GET" action="/blog/search" class="form-inline my-2 my-lg-0">
+          <input name="query" id="query" class="form-control mr-sm-2" type="search" placeholder="Search"
+            aria-label="Search" required>
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+
+
+        <a href="/admin"><button class="btn btn-outline-success my-2 mx-2 my-sm-0" type="submit">Admin</button></a>
+
+
+        {% if user.is_authenticated %}
+
+        <!-- trigger to signin and signout  -->
+        <a href="/blog/logout/" class="btn btn-success signio my-2 mx-2 my-sm-0">
+          Sign-Out
+        </a>
+
+        {%else%}
+
+        <button type="button" class="btn btn-success signio my-2 mx-2 my-sm-0" data-toggle="modal"
+          data-target="#signin">
+          Sign-In
+        </button>
+
+        {%endif%}
+
+
+
+
+
+        <!-- trigger to signup  -->
+
+        <button type="button" class="btn btn-success signup my-2 mx-2 my-sm-0" data-toggle="modal"
+          data-target="#signup">
+          Sign-Up
+        </button>
+      </div>
+    </nav>
+
+
+    {% for message in messages%}
+    <div class="alert alert-{{message.tags}} alert-dismissible show" role="alert">
+      <strong>Message: </strong>
+      {{message}}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {%endfor%}
+
+
+
+    <!-- signin Modal -->
+    <div class="modal fade" id="signin" tabindex="-1" aria-labelledby="signin" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <h5 class="modal-title" id="signin">
+              Sign-In</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <!-- form -->
+          <div class="modal-body">
+            <form method="post" , action="/blog/login/">
+              {% csrf_token %}
+              <div class="form-group">
+                <label for="username-signin">username</label>
+                <input type="text" class="form-control" id="username-signin" name="username-signin"
+                  placeholder="Username" required>
+              </div>
+
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="password" name="password"
+                  required>
+              </div>
+
+              <!-- form btn -->
+              <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Sign-Up with New account</button> -->
+
+                <button type="submit" class="btn btn-primary">Sign-in</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    <!-- signup Modal -->
+    <div class="modal fade" id="signup" tabindex="-1" aria-labelledby="signup" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <!-- header -->
+          <div class="modal-header">
+            <h5 class="modal-title" id="signup">Sign Up</h5>
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="container">
+            <p>Note: </p>
+            <ul>
+              <li>Username must be char and nubers only.</li>
+              <li>Username's length is greater than 10.</li>
+            </ul>
+            <hr>
+          </div>
+
+          <!-- body -->
+          <div class="modal-body">
+            <form action="/blog/signup/" , method="post">
+              {% csrf_token %}
+              <div class="form-group">
+                <label for="username-signup">Username</label>
+                <input type="text" name="username-signup" class="form-control" id="username-signup"
+                  placeholder="Enter Your username (Lower Case Only.)" required>
+              </div>
+
+
+              <div class="form-group">
+                <label for="fname">first Name</label>
+                <input type="text" name="fname" class="form-control" id="fname" placeholder="Enter Your Name" required>
+              </div>
+
+              <div class="form-group">
+                <label for="lname">Last Name</label>
+                <input type="text" name="lname" class="form-control" id="lname" placeholder="Enter Your Name" required>
+              </div>
+
+              <div class="form-group">
+                <label for="signemail">email</label>
+                <input type="email" name="signemail" class="form-control" id="signemail" placeholder="name@example.com"
+                  required>
+              </div>
+
+              <div class="form-group">
+                <label for="password-1">Password</label>
+                <input type="password" name="password-1" class="form-control" id="password-1" placeholder="password"
+                  required>
+              </div>
+
+              <div class="form-group">
+                <label for="password-2">Confirm Password</label>
+                <input type="password" name="password-2" class="form-control" id="password-2"
+                  placeholder="confirm password" required>
+              </div>
+
+
+
+
+              <!-- footer -->
+              <div class="modal-footer">
+                <p>New user account? </p>
+                <button type="submit" class="btn btn-primary">Sign-Up</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% block body %} {% endblock body %}
+
+
+
+
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+      crossorigin="anonymous"></script>
+
+    <!-- Option 2: jQuery, Popper.js, and Bootstrap JS
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+    -->
+    {% block bodyscript %} {% endblock bodyscript %}
+  </body>
+
+</html>

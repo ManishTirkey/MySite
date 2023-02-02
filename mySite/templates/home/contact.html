@@ -1,0 +1,57 @@
+{% extends "../basic.html" %}
+{%block contactactive%}active{%endblock contactactive%}
+
+<!-- title -->
+{% block title %} Contact {% endblock title %}
+
+<!-- body -->
+{% block body %}{% csrf_token %}
+<div class="container my-5">
+    <h3>Contact</h3>
+    <form method="POST" action="/contact/">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name">Name</label>
+
+            <input type="text" placeholder="Name" class="form-control" id="name" aria-describedby="emailHelp" name="name" required>
+
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" placeholder="example@gmail.com" class="form-control" id="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" placeholder="address" class="form-control" id="address" name="address" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phno">Phone Number</label>
+            <input type="phone" placeholder="9999999999" class="form-control" id="phno" name="phno" required>
+        </div>
+
+        <label for="ta">Comment</label>
+        <div class="form-group">
+
+            <textarea name="textarea" id="ta" cols="100" rows="3" placeholder="How i can help you? "></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary my-3">Submit</button>
+
+    </form>
+</div>
+{% endblock body %}
+
+<!-- script  -->
+
+{% block headscript %}
+<script>
+    {%if done %}
+    alert("Thank you {{name}} For Contact me");
+    document.location = '/'; 
+    {% endif %}
+</script>
+{% endblock headscript %}

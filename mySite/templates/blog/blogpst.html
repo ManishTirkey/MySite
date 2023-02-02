@@ -1,0 +1,411 @@
+{% extends "../basic.html" %}
+
+<!-- title -->
+{% block title %} My BlogPost {% endblock title %}
+
+
+<!-- style -->
+{%block style%}
+<style>
+    .title,
+    .author {
+        text-transform: capitalize;
+    }
+    /*.comment-user-img img{*/
+    
+    .comment-user-img {
+        padding-left: 1.5em;
+    }
+    
+    .comment-user-img i {
+        width: 100%;
+        height: auto;
+    }
+    
+    .comment-user-time {
+        font-size: .8em;
+    }
+    
+    .comment-group {
+        margin-top: 3em;
+    }
+    
+    .user-comments,
+    .real-comments {
+        color: rgba(33, 47, 61, 1);
+        border-radius: 5px;
+    }
+    
+    .real-comments {
+        background: rgba(223, 223, 223, 0.9);
+        margin-bottom: 1em;
+        padding: .5em 1em;
+    }
+    
+    .footer {
+        margin-top: 3em;
+        padding: .8em;
+        background-color: #A6ACAF;
+        border-radius: 10px;
+    }
+    
+    .icon {
+        color: #424949;
+    }
+    
+    .text {
+        padding: .8em;
+        color: #424949;
+    }
+    
+    .icon-text:hover {
+        cursor: pointer;
+        text-decoration: none;
+    }
+    
+    .collapse {
+        padding: 0.5em 1em;
+        margin-top: 2em;
+    }
+    
+    .reply-box {
+        overflow: hidden;
+        margin-bottom: .5em;
+    }
+    
+    .real-reply {
+        float: right;
+        width: 90%;
+        border-radius: 5px;
+        background: rgba(223, 223, 223, 0.9);
+        padding: .5em 1em;
+    }
+    
+    .reply-form {
+        margin-top: 2em;
+    }
+    
+    .reply-icon {
+        float: left;
+        width: 80px;
+    }
+    
+    .reply-username {
+        float: left;
+    }
+    
+    .reply-username-icon {
+        overflow: hidden;
+    }
+    
+    .reply-box-container {
+        margin-bottom: 3em;
+    }
+</style>
+
+{%endblock style%}
+
+<!-- body -->
+{% block body %} {% load humanize %} {%csrf_token%}
+
+
+
+<div class="container my-5">
+    <div class="blog-post">
+        <h2 class="blog-post-title title">{{post.title}}</h2>
+        <p class="blog-post-meta">{{post.time}} by <a href="/about" class="author">{{post.author}}</a></p>
+
+        <hr>
+        <p>{{post.content|safe}}</p>
+        <hr>
+        <p>Cum sociis natoque penatibus et magnis <a href="#">dis parturient montes</a>, nascetur ridiculus mus. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Sed posuere consectetur est at lobortis. Cras mattis consectetur
+            purus sit amet fermentum.</p>
+        <blockquote>
+            <p>Curabitur blandit tempus porttitor. <strong>Nullam quis risus eget urna mollis</strong> ornare vel eu leo. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+        </blockquote>
+        <p>Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
+        <hr>
+
+        
+    </div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="container">
+    <div class="my-2">
+
+        {%if not user.is_anonymous and user.is_active%}
+        <!-- comment-form -->
+
+        <form method="POST" action="/blog/BlogComments/">
+            {%csrf_token%}
+            <div class="form-group">
+
+                <input type="text" id="comment" class="form-control" name="comment" placeholder="Enter your comments..." required>
+
+                <input type="hidden" name="postid" value={{post.sno}}>
+                <input type="hidden" name="parentid" value="">
+
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        {%else%}
+        <div>
+            <h2>Comment is Turned off for you Please Login First</h2>
+            <div class="row">
+                <a href="#" class="signin-from-comment" data-toggle="modal" data-target="#signin">
+                    I have a already Account..
+                </a>
+            </div>
+        </div>
+
+        {%endif%}
+    </div>
+
+
+
+
+    {%for comment in comments%}
+
+    <div class="comment-group">
+        <div class="row my-2">
+
+            <div class="col-md-1 comment-user-img">
+                <!-- <img src="/static/blog-image-12.jpg">         -->
+                <i class="fa fa-user-o fa-3x" aria-hidden="true"></i>
+            </div>
+
+            <div class="col-md-2">
+
+                <div class="row comment-username">
+                    <strong>{{comment.user.username}}</strong>
+                </div>
+
+                <div class="row comment-user-time">
+                    <i class="badge badge-secondary">{{comment.timestamp | naturaltime}}</i>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="row">
+
+            <div class="col-md-1 comment-heading">
+                <i>
+                    <p>Comment: </p>
+                </i>
+            </div>
+
+
+
+            <div class="col-md-8 user-comments">
+                <div class="real-comments">
+                    {{comment.comment}}
+                </div>
+
+
+
+                <!-- reply -->
+
+                <!-- trrigger to reply-collapse data -->
+                {%if not user.is_anonymous and user.is_active%}
+                <p>
+                    <a data-toggle="collapse" href="#collapse{{comment.sno}}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                        reply
+                    </a>
+                    <!-- <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse{{user.sno}}" aria-expanded="false" aria-controls="collapseExample">
+                    Button with data-target
+                  </button> -->
+                </p>
+                {%endif%}
+
+
+
+
+
+
+
+
+
+
+<!-- <div class="replies bg-danger my-2">
+                        {% for reply in replies|get_val:usercomment.sno %}
+                            {{reply.comment}}
+                        {%endfor%}
+                    </div> -->
+
+
+                    <!-- <div class="replies bg-danger my-2">
+                        {% for reply in replies|get_val:usercomment.sno %}
+                            {{reply}}
+                        {%endfor%}
+                    </div> -->
+                    
+                    <!--replies - first argument
+                    usercomment.sno - second argument -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+
+
+                    
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+
+
+
+                <!-- collapse data -->
+
+                <div class="collapse" id="collapse{{comment.sno}}">
+                    {%for reply in comments%} {%if reply.parent != None%}
+                    <div class="reply-box-container">
+
+                        <div class="reply-username-icon">
+
+                            <div class="reply-icon">
+                                <i class="fa fa-reply fa-2x" aria-hidden="true"></i>
+                            </div>
+
+                            <div class="reply-username">
+                                <div>
+                                    <strong>{{comment.user.username}}</strong>
+
+                                </div>
+                                <i class="badge badge-secondary">{{reply.timestamp | naturaltime}}</i>
+                                <div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="reply-box">
+
+                            <span class="reply-heading">
+                                <i>reply: </i>
+                            </span>
+
+
+                            <div class="real-reply">
+                                {{reply.parent}}
+                            </div>
+                        </div>
+                    </div>
+                    {%endif%} {%endfor%}
+
+
+                    <!-- reply-form -->
+
+                    <div class="reply-form">
+
+                        <form method="POST" action="/blog/BlogComments/">
+                            {%csrf_token%}
+
+                            <div class="form-group">
+
+
+                                <input type="text" class="form-control" name="comment" placeholder="Enter your comments..." required>
+
+
+                                <input type="hidden" name="postid" value={{post.sno}}>
+
+                                <input type="hidden" name="parentid" value={{comment.sno}}>
+
+
+                            </div>
+
+
+                            <button type="submit" class="btn btn-primary">post reply</button>
+
+                        </form>
+                    </div>
+
+                </div>
